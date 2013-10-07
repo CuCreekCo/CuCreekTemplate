@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+ http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+ http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+   <!--
+       This will automatically locate any and all property files you have
+       within your classpath, provided they fall under the META-INF/spring
+       directory. The located property files are parsed and their values can
+       then be used within application context files in the form of
+       ${propertyKey}.
+   -->
+   <context:property-placeholder location="classpath*:META-INF/spring/*.properties"/>
+   <!--
+       Turn on AspectJ @Configurable support. As a result, any time you
+       instantiate an object, Spring will attempt to perform dependency
+       injection on that object. This occurs for instantiation via the "new"
+       keyword, as well as via reflection. This is possible because AspectJ
+       is used to "weave" Roo-based applications at compile time. In effect
+       this feature allows dependency injection of any object at all in your
+       system, which is a very useful feature (without @Configurable you'd
+       only be able to dependency inject objects acquired from Spring or
+       subsequently presented to a specific Spring dependency injection
+       method). Roo applications use this useful feature in a number of
+       areas, such as @PersistenceContext injection into entities.
+   -->
+   <context:spring-configured/>
+   <!--
+       This declaration will cause Spring to locate every @Component,
+       @Repository and @Service in your application. In practical terms this
+       allows you to write a POJO and then simply annotate the new POJO as an
+       @Service and Spring will automatically detect, instantiate and
+       dependency inject your service at startup time. Importantly, you can
+       then also have your new service injected into any other class that
+       requires it simply by declaring a field for your service inside the
+       relying class and Spring will inject it. Note that exclude filters
+       are declared. This ensures Spring doesn't
+       instantiate your @Controller classes, as these should be instantiated
+       by a web tier application context. Refer to web.xml for more details
+       about the web tier application context setup services.
+
+       Furthermore, this turns on @Autowired, @PostConstruct etc support. These
+       annotations allow you to use common Spring and Java Enterprise Edition
+       annotations in your classes without needing to do any special configuration.
+       The most commonly used annotation is @Autowired, which instructs Spring to
+       dependency inject an object into your class.
+   -->
+   <context:component-scan base-package="com.cucreek">
+      <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+   </context:component-scan>
+
+   <jpa:repositories base-package="com.cucreek.persistence.repository"/>
+
+
+   <!-- FOR TESTING ONLY - set up a local HSQL database
+      When ready for a production scale database be sure to update database.properties and uncomment
+      the dataSource bean below
+   -->
+   <jdbc:embedded-database id="dataSource">
+      <jdbc:script location="classpath:META-INF/spring/cucreek-create-embedded-db.sql"/>
+   </jdbc:embedded-database>
+
+   <!-- Using embedded database for testing - uncomment this and remove the localEmbeddedDB
+        when ready for production -->
+   <!--
+   <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource" lazy-init="true">
+      <property name="driverClassName" value="${database.driverClassName}"/>
+      <property name="url" value="${database.url}"/>
+      <property name="username" value="${database.username}"/>
+      <property name="password" value="${database.password}"/>
+      <property name="testOnBorrow" value="true"/>
+      <property name="testOnReturn" value="true"/>
+      <property name="testWhileIdle" value="true"/>
+      <property name="timeBetweenEvictionRunsMillis" value="1800000"/>
+      <property name="numTestsPerEvictionRun" value="3"/>
+      <property name="minEvictableIdleTimeMillis" value="1800000"/>
+      <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+   </bean> -->
+   <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
+         lazy-init="true">
+      <property name="entityManagerFactory" ref="entityManagerFactory"/>
+   </bean>
+   <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+   <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory"
+         lazy-init="true">
+      <property name="persistenceUnitName" value="persistenceUnit"/>
+      <property name="dataSource" ref="dataSource"/>
+   </bean>
+
+   <!--  Message Source Bean -->
+   <bean id="businessMessageSource"
+         class="org.springframework.context.support.ResourceBundleMessageSource"
+         p:basenames="business-messages"/>
+
+   <!-- Manual Validation Validator -->
+   <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+   <!-- E-Mail Template -->
+   <bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
+      <property name="host" value="${email.host}"/>
+      <property name="protocol" value="${email.protocol}"/>
+      <property name="javaMailProperties">
+         <props>
+            <prop key="mail.smtp.auth">false</prop>
+            <prop key="mail.smtp.starttls.enable">true</prop>
+            <prop key="mail.smtp.debug">true</prop>
+         </props>
+      </property>
+   </bean>
+   <bean class="org.springframework.mail.SimpleMailMessage" id="templateMessage">
+      <property name="from" value="${email.from}"/>
+      <property name="subject" value="${email.subject}"/>
+   </bean>
+
+</beans>

@@ -1,0 +1,11 @@
+body {
+   padding-top: 70px;
+}
+
+/* Overrides the jQuery autocomplete to restrict the box height */
+.ui-autocomplete {
+   max-height: 220px;
+   overflow-y: auto; /* prevent horizontal scrollbar */
+   overflow-x: hidden; /* add padding to account for vertical scrollbar */
+   z-index: 1000 !important;
+}
