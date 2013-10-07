@@ -1,6 +1,6 @@
 CuCreekTemplate
 ===============
-The CuCreekTemplate (Copper Creek Software) project is an opinionated Spring 3.2 MVC web application.  It consists
+The CuCreekTemplate (Copper Creek Software) project is an opinionated Spring 3.2 MVC web application template.  It consists
 of a standard Spring MVC project that uses:
 * JSP with JSTL for the views
 * Spring Security
@@ -25,3 +25,7 @@ $ mvn tomcat7:run
 
 Obviously, this assumes you're in the same directory as the pom.xml file when you run this.
 
+Other Stuff
+===========
+Could I have just created a Maven archetype?  Or a Spring Boot script?  Maybe a Spring Roo script? Perhaps
+some other wizardry?  Yeah.  But this works for me.
