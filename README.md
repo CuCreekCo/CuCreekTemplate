@@ -36,7 +36,7 @@ Everything else is documented in the code/JavaDocs - but just barely and probabl
 Other Stuff
 ===========
 Could I have just created a Maven archetype?  Or a Spring Boot script?  Maybe a Spring Roo script? Perhaps
-some other wizardry?  Yeah.  But this works for me.
+some other wizardry?  Probably, but lazy.
 
 Also, you may have noticed the IntelliJ `CuCreekMVCTemplate.iml` file - I used IDEA 12.
 
