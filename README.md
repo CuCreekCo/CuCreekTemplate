@@ -21,11 +21,22 @@ How to Start the Web App
 ========================
 Assuming you have Maven installed, just start it up with the embedded Tomcat runner:
 
-$ mvn tomcat7:run
+`$ mvn tomcat7:run`
 
-Obviously, this assumes you're in the same directory as the pom.xml file when you run this.
+Obviously, this assumes you're in the same directory as the _pom.xml_ file when you run this.
+
+Open up your web browser and point it to:  **http://localhost:8080/CuCreek/hello**
+
+You'll probably be asked to log on, use: **jason/12345678**
+
+The hello page shows a quick example of the custom tags and a datagrid.
+
+Everything else is documented in the code/JavaDocs - but just barely and probably poorly.
 
 Other Stuff
 ===========
 Could I have just created a Maven archetype?  Or a Spring Boot script?  Maybe a Spring Roo script? Perhaps
 some other wizardry?  Yeah.  But this works for me.
+
+Also, you may have noticed the IntelliJ `CuCreekMVCTemplate.iml` file - I used IDEA 12.
+
